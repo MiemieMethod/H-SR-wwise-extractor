@@ -338,8 +338,9 @@ def renameEventWems():
     def findMusicSound(sound_id, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result={}):
         if sound_id in musicSwitchCntrs:
             for child in musicSwitchCntrs[sound_id]:
-                path += f"/{musicSwitchCntrs[sound_id][child]}"
-                findMusicSound(child, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result)
+                subpath = path
+                subpath += f"/{musicSwitchCntrs[sound_id][child]}"
+                findMusicSound(child, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, subpath, result)
         if sound_id in musicRanSeqCntrs:
             childs = []
             getChilds(musicRanSeqCntrs[sound_id], childs)
@@ -352,8 +353,9 @@ def renameEventWems():
                 findMusicSound(child, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result)
         if sound_id in musicTracks:
             for source in musicTracks[sound_id]:
-                path += f"/{source["AkMediaInformation"]["sourceID"]["@value"]}"
-                result[source["AkMediaInformation"]["sourceID"]["@value"]] = path
+                subpath = path
+                subpath += f"/{source["AkMediaInformation"]["sourceID"]["@value"]}"
+                result[source["AkMediaInformation"]["sourceID"]["@value"]] = subpath
 
     if not os.path.exists(f"output/rename"):
         os.makedirs(f"output/rename")
