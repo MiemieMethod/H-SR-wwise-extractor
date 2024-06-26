@@ -178,7 +178,7 @@ def unpackWwiseBanks():
 
 
 def generateBankData():
-    result = subprocess.run(['python', 'wwiser.pyz', '-r', '-d', 'xml', '-dn', './output/unpack/banks', '*.bnk'],
+    result = subprocess.run(['python', 'wwiser.pyz', '-d', 'xml', '-dn', './output/unpack/banks', './output/unpack/**/*.bnk'],
                             capture_output=True, text=True)
     print(result.stdout)
 
