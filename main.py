@@ -407,10 +407,10 @@ def renameEventWems():
                                     name = source["AkMediaInformation"]["sourceID"]["@value"]
                                     file_ext = "wem"
                                     file_index = f"{sound_item["@index"]}~"
-                                file2rename = f"{normal_sound_path[14:]}/{name}"
-                                file_destination = f"{normal_sound_path[14:]}/{event_name}/{file_index}{name}"
-                                if not os.path.exists(f"output/rename/{normal_sound_path[14:]}/{event_name}"):
-                                    os.makedirs(f"output/rename/{normal_sound_path[14:]}/{event_name}")
+                                file2rename = f"{normal_sound_path[16:]}/{name}"
+                                file_destination = f"{normal_sound_path[16:]}/{event_name}/{file_index}{name}"
+                                if not os.path.exists(f"output/rename/{normal_sound_path[16:]}/{event_name}"):
+                                    os.makedirs(f"output/rename/{normal_sound_path[16:]}/{event_name}")
                                 elegantRename(file2rename, file_destination, file_ext, "Event")
                                 sound_processed = True
 
@@ -435,12 +435,12 @@ def renameEventWems():
                             initial_item = sound_bank_loaded_items_map[
                                 action_item["ActionInitialValues"]["idExt"]["@value"]]
                             if initial_item["@name"] == "CAkMusicSwitchCntr":
-                                path = f"{normal_sound_path[14:]}/{event_name}"
+                                path = f"{normal_sound_path[16:]}/{event_name}"
                                 filehash2filepath = {}
                                 findMusicSound(initial_item["ulID"]["@value"], musicSegments, musicTracks,
                                                musicRanSeqCntrs, musicSwitchCntrs, path, filehash2filepath)
                                 for filehash in filehash2filepath:
-                                    file2rename = f"{normal_sound_path[14:]}/{filehash}"
+                                    file2rename = f"{normal_sound_path[16:]}/{filehash}"
                                     file_destination = filehash2filepath[filehash]
                                     if not os.path.exists(
                                             "output/rename/" + file_destination.replace(f"/{filehash}", "")):
