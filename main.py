@@ -277,6 +277,9 @@ def elegantRename(hash_path, voice_path, ext="wem", log_area="External"):
 
 def deleteCompletedFiles():
     global completed_files
+    with open("output/unpack/finished.txt", "w", encoding="utf-8") as f:
+        for file in completed_files:
+            f.write(file + "\n")
     for file in completed_files:
         os.remove(file)
     completed_files = []
@@ -335,7 +338,7 @@ def renameEventWems():
                         result.append(child["@value"])
         return result
 
-    def findMusicSound(sound_id, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result={}):
+    def findMusicSound(sound_id, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result):
         if sound_id in musicSwitchCntrs:
             for child in musicSwitchCntrs[sound_id]:
                 subpath = path
@@ -363,10 +366,14 @@ def renameEventWems():
     for bank_name in bank_dict:
         if bank_name == "hash":
             continue
-        print(f"[Event] {bank_name}")
+        # print(f"[Event] {bank_name}")
         bank = bank_dict[bank_name]
 
         loaded_items_map = getLoadedItems(bank)
+
+        processed = False
+        global completed_files
+
         for item_id in loaded_items_map:
             item = loaded_items_map[item_id]
             if item["@name"] == "CAkEvent":
@@ -384,6 +391,9 @@ def renameEventWems():
                         musicSegments = {}
                         musicTracks = {}
 
+                        sound_processed = False
+
+                        normal_sound_path = sound_bank["@path"].replace("\\", "/")
                         for sound_id in sound_bank_loaded_items_map:
                             sound_item = sound_bank_loaded_items_map[sound_id]
                             if sound_item["@name"] == "CAkSound":
@@ -397,25 +407,26 @@ def renameEventWems():
                                     name = source["AkMediaInformation"]["sourceID"]["@value"]
                                     file_ext = "wem"
                                     file_index = f"{sound_item["@index"]}~"
-                                file2rename = f"{sound_bank["@path"][14:]}/{name}"
-                                file_destination = f"{sound_bank["@path"][14:]}/{event_name}/{file_index}{name}"
-                                if not os.path.exists(f"output/rename/{sound_bank["@path"][14:]}/{event_name}"):
-                                    os.makedirs(f"output/rename/{sound_bank["@path"][14:]}/{event_name}")
+                                file2rename = f"{normal_sound_path[14:]}/{name}"
+                                file_destination = f"{normal_sound_path[14:]}/{event_name}/{file_index}{name}"
+                                if not os.path.exists(f"output/rename/{normal_sound_path[14:]}/{event_name}"):
+                                    os.makedirs(f"output/rename/{normal_sound_path[14:]}/{event_name}")
                                 elegantRename(file2rename, file_destination, file_ext, "Event")
+                                sound_processed = True
 
                             if sound_item["@name"] == "CAkMusicSwitchCntr":
                                 node_id2name = {}
                                 findAudioNode(sound_item["MusicSwitchCntrInitialValues"]["AkDecisionTree"]["pNodes"],
                                               node_id2name)
                                 musicSwitchCntrs[sound_item["ulID"]["@value"]] = node_id2name
+                                sound_processed = True
                             if sound_item["@name"] == "CAkMusicRanSeqCntr":
                                 musicRanSeqCntrs[sound_item["ulID"]["@value"]] = \
-                                    sound_item["MusicRanSeqCntrInitialValues"]["MusicTransNodeParams"][
-                                        "MusicNodeParams"][
-                                        "Children"]
+                                sound_item["MusicRanSeqCntrInitialValues"]["MusicTransNodeParams"]["MusicNodeParams"][
+                                    "Children"]
                             if sound_item["@name"] == "CAkMusicSegment":
                                 musicSegments[sound_item["ulID"]["@value"]] = \
-                                    sound_item["MusicSegmentInitialValues"]["MusicNodeParams"]["Children"]
+                                sound_item["MusicSegmentInitialValues"]["MusicNodeParams"]["Children"]
                             if sound_item["@name"] == "CAkMusicTrack":
                                 musicTracks[sound_item["ulID"]["@value"]] = sound_item["MusicTrackInitialValues"][
                                     "pSource"]
@@ -424,17 +435,26 @@ def renameEventWems():
                             initial_item = sound_bank_loaded_items_map[
                                 action_item["ActionInitialValues"]["idExt"]["@value"]]
                             if initial_item["@name"] == "CAkMusicSwitchCntr":
-                                path = f"{sound_bank["@path"][14:]}/{event_name}"
+                                path = f"{normal_sound_path[14:]}/{event_name}"
                                 filehash2filepath = {}
                                 findMusicSound(initial_item["ulID"]["@value"], musicSegments, musicTracks,
                                                musicRanSeqCntrs, musicSwitchCntrs, path, filehash2filepath)
                                 for filehash in filehash2filepath:
-                                    file2rename = f"{sound_bank["@path"][14:]}/{filehash}"
+                                    file2rename = f"{normal_sound_path[14:]}/{filehash}"
                                     file_destination = filehash2filepath[filehash]
                                     if not os.path.exists(
                                             "output/rename/" + file_destination.replace(f"/{filehash}", "")):
                                         os.makedirs("output/rename/" + file_destination.replace(f"/{filehash}", ""))
                                     elegantRename(file2rename, file_destination, "wem", "Event")
+
+                        if sound_processed and f"{normal_sound_path}/{sound_bank["@filename"]}" not in completed_files:
+                            completed_files.append(f"{normal_sound_path}/{sound_bank["@filename"]}")
+
+                processed = True
+
+        normal_path = bank["@path"].replace("\\", "/")
+        if processed and f"{normal_path}/{bank["@filename"]}" not in completed_files:
+            completed_files.append(f"{normal_path}/{bank["@filename"]}")
 
     global skip_num
     print(f"[Event] skipped {skip_num} files because of unfound hash.")
