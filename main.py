@@ -133,18 +133,24 @@ def outputWwnames():
     with open("wwiser_utils/wwnames/Honkai - Star Rail (PC).txt", "r", encoding="utf-8") as f:
         result += f"\n### WWISER NAMES\n{f.read()}"
 
-    result += "\n### BRUTE FORCE NAMES\n"
-    results = []
-    for root, dirs, files in os.walk("data"):
-        for file in files:
-            if file.endswith(".json"):
-                with open(os.path.join(root, file), "r", encoding="utf-8") as f:
-                    if file.startswith("TextMap"):
-                        continue
-                    print(f"[Main] Name fetch: Reading {os.path.join(root, file)}")
-                    data = json.load(f)
-                    addJsonString(data, results)
-    result += "\n".join(results)
+    # result += "\n### BRUTE FORCE NAMES\n"
+    # results = []
+    # for root, dirs, files in os.walk("data"):
+    #     for file in files:
+    #         if file.endswith(".json"):
+    #             with open(os.path.join(root, file), "r", encoding="utf-8") as f:
+    #                 if file.startswith("TextMap"):
+    #                     continue
+    #                 print(f"[Main] Name fetch: Reading {os.path.join(root, file)}")
+    #                 data = json.load(f)
+    #                 addJsonString(data, results)
+    # result += "\n".join(results)
+
+    with open("brute_force_names.txt", "r", encoding="utf-8") as f:
+        result += f.read()
+
+    with open("asset_names.txt", "r", encoding="utf-8") as f:
+        result += f.read()
 
     with open("output/unpack/wwnames.txt", "w", encoding="utf-8") as f:
         f.write(result)
@@ -514,22 +520,22 @@ def renameEventWems():
 if __name__ == '__main__':
     print("[Main] Start!")
     print("[Main] Start unpacking Wwise banks...")
-    # unpackWwiseBanks()
+    unpackWwiseBanks()
     print("[Main] Start extracting bank wems...")
-    # extractBankWem()
+    extractBankWem()
     # if you just want to unpack but not rename, comment all lines below
     print("[Main] Start outputting wwnames...")
-    # outputWwnames()
+    outputWwnames()
     print("[Main] Start generating bank data...")
     generateBankData()
     print("[Main] Start loading bank xml...")
     loadBankXml()
     print("[Main] Start renaming external wems...")
-    # renameExtrenalWems()
+    renameExtrenalWems()
     print("[Main] Start renaming event wems...")
     renameEventWems()
     print("[Main] Start deleting completed files...")
     # this program will delete the files in the `output/unpack` folder which are successfully renamed.
     # if you want to keep them, comment the line below.
-    # deleteCompletedFiles()
+    deleteCompletedFiles()
     print("[Main] Done!")
