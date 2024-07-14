@@ -219,7 +219,7 @@ def extractBankWem():
         print(result.stdout)
 
 def generateBankData():
-    result = subprocess.run(['python', 'wwiser.pyz', '-d', 'xml', '-dn', './output/unpack/banks', './output/unpack/**/*.bnk'],
+    result = subprocess.run(['python', 'wwiser.pyz', '-k', 'xml', '-dn', './output/unpack/banks', './output/unpack/**/*.bnk'],
                             capture_output=True, text=True)
     print(result.stdout)
 
@@ -232,6 +232,7 @@ def loadBankXml():
         with open("output/unpack/banks_temp.json", 'r') as f:
             bank_dict_old = json.load(f)
             # if bank_dict_old["hash"] == fnv_hash_64(xml_string):
+            print("[Main] Bank data loaded from cache. If you want to reload, delete the `banks_temp.json` file.")
             bank_dict = bank_dict_old
             return
     data_dict = xmltodict.parse("<base>" + xml_string + "</base>")
@@ -246,7 +247,7 @@ def loadBankXml():
         bank_dict[hash_map[lang]][bank["@filename"]] = bank_cont
 
     with open("output/unpack/banks_temp.json", 'w') as f:
-        bank_dict["hash"] = fnv_hash_64(xml_string)
+        # bank_dict["hash"] = fnv_hash_64(xml_string)
         json.dump(bank_dict, f, indent=4)
 
 
@@ -366,14 +367,12 @@ def renameEventWems():
             loaded_items_map[item.get("ulID", item.get("ulStateID", ""))["@value"]] = item
         return loaded_items_map
 
-    def findAudioNode(nodes, audioNodeIdToName):
+    def findAudioNode(nodes, audioNodeIdToName, path = ""):
         for node in nodes:
             if "audioNodeId" in node:
-                if node["key"]["@value"] != "0":
-                    audioNodeIdToName[node["audioNodeId"]["@value"]] = node["key"].get("@hashname",
-                                                                                       node["key"]["@value"])
+                audioNodeIdToName[node["audioNodeId"]["@value"]] = path + node["key"].get("@hashname", node["key"]["@value"])
             elif "pNodes" in node:
-                findAudioNode(node["pNodes"], audioNodeIdToName)
+                findAudioNode(node["pNodes"], audioNodeIdToName, path + node["key"].get("@hashname", node["key"]["@value"]) + "/")
 
     def findSwitchNode(nodes, switchNodeIdToName):
         for node in nodes:
@@ -561,6 +560,17 @@ def renameEventWems():
     print(f"[Event] skipped {skip_num} files because of unfound hash.")
     skip_num = 0
 
+def decodeWems():
+    for root, dirs, files in os.walk("output/rename"):
+        for file in files:
+            if file.endswith(".wem"):
+                path = root.replace("\\", "/") + "/" + file
+                short_path = path.replace("output/rename/", "").replace("wem", "wav")
+                if not os.path.exists(f"output/decode/{short_path}"):
+                    os.makedirs(os.path.dirname(f"output/decode/{short_path}"), exist_ok=True)
+                subprocess.run(
+                    ["./vgmstream/vgmstream-cli", path, "-o", f"output/decode/{short_path}"])
+
 
 if __name__ == '__main__':
     print("[Main] Start!")
@@ -583,4 +593,6 @@ if __name__ == '__main__':
     # this program will delete the files in the `output/unpack` folder which are successfully renamed.
     # if you want to keep them, comment the line below.
     deleteCompletedFiles()
+    print("[Main] Start decoding wems...")
+    decodeWems()
     print("[Main] Done!")
