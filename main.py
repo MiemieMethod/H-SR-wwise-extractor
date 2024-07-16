@@ -95,6 +95,8 @@ def outputWwnames():
     result += "\n### AUDIO CONFIG NAMES\n"
     with open("data/ExcelOutput/AvatarVO.json", "r", encoding="utf-8") as f:
         votags = json.load(f)
+    for votag in votags:
+        result += "Ev_avatar_footsteps_material_{0}".replace("{0}", votag) + "\n"
     with open("data/Config/AudioConfig.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         for id in data:
@@ -145,6 +147,9 @@ def outputWwnames():
     #                 data = json.load(f)
     #                 addJsonString(data, results)
     # result += "\n".join(results)
+
+    # with open("output/or_wwnames.txt", "r", encoding="utf-8", errors="ignore") as f:
+    #     result += f.read()
 
     with open("brute_force_names.txt", "r", encoding="utf-8") as f:
         result += f.read()
@@ -214,12 +219,12 @@ def unpackWwiseBanks():
 
 def extractBankWem():
     for i in ["SFX", "Chinese(PRC)", "English", "Japanese", "Korean"]:
-        result = subprocess.run(['./quickbms', '-F', '*.bnk', '-o', './wwiser_utils/scripts/wwise_bnk_extractor.bms', f'./output/unpack/{i.lower()}', f'./output/unpack/{i.lower()}'],
+        result = subprocess.run(['./quickbms', '-F', '*.bnk', '-k', './wwiser_utils/scripts/wwise_bnk_extractor.bms', f'./output/unpack/{i.lower()}', f'./output/unpack/{i.lower()}'],
                             capture_output=True, text=True)
         print(result.stdout)
 
 def generateBankData():
-    result = subprocess.run(['python', 'wwiser.pyz', '-k', 'xml', '-dn', './output/unpack/banks', './output/unpack/**/*.bnk'],
+    result = subprocess.run(['python', 'wwiser.pyz', '-d', 'xml', '-dn', './output/unpack/banks', './output/unpack/**/*.bnk'],
                             capture_output=True, text=True)
     print(result.stdout)
 
