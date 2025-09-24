@@ -6,4 +6,4 @@
 	url = https://github.com/bnnm/wwiser-utils
 [submodule "data"]
 	path = data
-	url = https://github.com/Dimbreath/StarRailData
+	url = https://github.com/DimbreathBot/TurnBasedGameData.git
