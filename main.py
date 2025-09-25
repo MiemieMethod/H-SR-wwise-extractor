@@ -45,45 +45,37 @@ def outputWwnames():
     result += "\n### BGM NAMES\n"
     with open("data/ExcelOutput/BackGroundMusic.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        for id in data:
-            entry = data[id]
+        for entry in data:
             result += f"{entry["MusicSwitchName"]}\n"
 
     result += "\n### VOICE ATLAS NAMES\n"
     with open("data/ExcelOutput/VoiceAtlas.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        for id in data:
-            entry = data[id]
-            for subid in entry:
-                subentry = entry[subid]
-                result += f"{subentry["AudioEvent"]}\n"
+        for entry in data:
+            result += f"{entry["AudioEvent"]}\n"
 
     result += "\n### VOICE NAMES\n"
     with open("data/ExcelOutput/VoiceConfig.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        for id in data:
-            entry = data[id]
+        for entry in data:
             result += f"{entry["VoicePath"]}\n"
 
     result += "\n### SFX NAMES\n"
     with open("data/ExcelOutput/SFXConfig.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        for id in data:
-            entry = data[id]
+        for entry in data:
             result += f"{entry["SFXPath"]}\n"
 
     result += "\n### CUTSCENE CONFIG NAMES\n"
     with open("data/ExcelOutput/CutSceneConfig.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        for id in data:
-            entry = data[id]
+        for entry in data:
             result += f"{entry["CutSceneBGMStateName"]}\n"
 
     result += "\n### FLOOR CONFIG NAMES\n"
     with open("data/ExcelOutput/MazeFloor.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        for id in data:
-            entry = data[id]
+        for entry in data:
             result += f"{entry["BGMWorldState"]}\n"
             result += f"{entry["FloorBGMGroupName"]}\n"
             result += f"{entry["FloorBGMNormalStateName"]}\n"
@@ -96,7 +88,7 @@ def outputWwnames():
     with open("data/ExcelOutput/AvatarVO.json", "r", encoding="utf-8") as f:
         votags = json.load(f)
     for votag in votags:
-        result += "Ev_avatar_footsteps_material_{0}".replace("{0}", votag) + "\n"
+        result += "Ev_avatar_footsteps_material_{0}".replace("{0}", votag["VOTag"]) + "\n"
     with open("data/Config/AudioConfig.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         for id in data:
@@ -107,9 +99,9 @@ def outputWwnames():
                     for votag in votags:
                         if subentry.find("{1}") != -1:
                             for votag2 in votags:
-                                result += subentry.replace("{0}", votag).replace("{1}", votag2) + "\n"
+                                result += subentry.replace("{0}", votag["VOTag"]).replace("{1}", votag2["VOTag"]) + "\n"
                         else:
-                            result += subentry.replace("{0}", votag) + "\n"
+                            result += subentry.replace("{0}", votag["VOTag"]) + "\n"
                 continue
             if id == "SerialBellsInfo":
                 continue
@@ -133,7 +125,8 @@ def outputWwnames():
                 result += f"{item2}\n"
 
     with open("wwiser_utils/wwnames/Honkai - Star Rail (PC).txt", "r", encoding="utf-8") as f:
-        result += f"\n### WWISER NAMES\n{f.read()}"
+        lines = [line for line in f if line.strip() and not line.lstrip().startswith('#')]
+        result += '\n### WWISER NAMES\n' + ''.join(lines)
 
     # result += "\n### BRUTE FORCE NAMES\n"
     # results = []
@@ -157,6 +150,9 @@ def outputWwnames():
     with open("asset_names.txt", "r", encoding="utf-8") as f:
         result += f.read()
 
+    with open("manual_names.txt", "r", encoding="utf-8") as f:
+        result += f.read()
+
     with open("output/unpack/wwnames.txt", "w", encoding="utf-8") as f:
         f.write(result)
 
@@ -166,30 +162,24 @@ def elegantWrite(f, file_data):
     if len(file_data) > 1:
         print("[Mian] file name hash collides! Keep the first one.")
 
+def addAllPckFiles(package, directory):
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.pck'):
+                file_path = os.path.join(root, file)
+                package.addfile(open(file_path, 'rb'))
+                # print(f"[Main] added {file} to the package!")
 
-def unpackWwiseBanks():
+
+def unpackWwiseBanks(path = "input"):
     package = Package()
 
     if not os.path.exists("output/unpack"):
         os.makedirs("output/unpack")
-    if not os.path.exists("input"):
+    if not os.path.exists(path):
         print("[Main] missing `input` folder!")
 
-    package.addfile(open(f'input/Minimum.pck', 'rb'))
-    for i in range(0, 32):
-        package.addfile(open(f'input/Banks{i}.pck', 'rb'))
-    for i in range(0, 32):
-        package.addfile(open(f'input/Music{i}.pck', 'rb'))
-    for i in range(0, 32):
-        package.addfile(open(f'input/Streamed{i}.pck', 'rb'))
-    for i in range(0, 32):
-        package.addfile(open(f'input/SFX/External{i}.pck', 'rb'))
-    for i in ["Chinese(PRC)", "English", "Japanese", "Korean"]:
-        if os.path.exists(f"input/{i}"):
-            for j in range(0, 32):
-                package.addfile(open(f'input/{i}/External{j}.pck', 'rb'))
-            for j in range(0, 32):
-                package.addfile(open(f'input/{i}/VoBanks{j}.pck', 'rb'))
+    addAllPckFiles(package, path)
 
     for i in ["SFX", "Chinese(PRC)", "English", "Japanese", "Korean"]:
         if not os.path.exists(f"output/unpack/{i.lower()}"):
@@ -347,8 +337,7 @@ def renameExtrenalWems():
             os.makedirs(f"output/rename/{i.lower()}/voice")
         with open("data/ExcelOutput/VoiceConfig.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-            for id in data:
-                entry = data[id]
+            for entry in data:
                 if entry.get("IsPlayerInvolved", False):
                     hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_f.wem")
                     elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_f")
@@ -400,28 +389,6 @@ def renameEventWems():
                     for child in node["ulChildID"]:
                         result.append(child["@value"])
         return result
-
-    def findMusicSound(sound_id, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result):
-        if sound_id in musicSwitchCntrs:
-            for child in musicSwitchCntrs[sound_id]:
-                subpath = path
-                subpath += f"/{musicSwitchCntrs[sound_id][child]}"
-                findMusicSound(child, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, subpath, result)
-        if sound_id in musicRanSeqCntrs:
-            childs = []
-            getChilds(musicRanSeqCntrs[sound_id], childs)
-            for child in childs:
-                findMusicSound(child, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result)
-        if sound_id in musicSegments:
-            childs = []
-            getChilds(musicSegments[sound_id], childs)
-            for child in childs:
-                findMusicSound(child, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result)
-        if sound_id in musicTracks:
-            for source in musicTracks[sound_id]:
-                subpath = path
-                subpath += f"/{source["AkMediaInformation"]["sourceID"]["@value"]}"
-                result[source["AkMediaInformation"]["sourceID"]["@value"]] = subpath
 
     def findMusicSound(sound_id, musicSegments, musicTracks, musicRanSeqCntrs, musicSwitchCntrs, path, result):
         if sound_id in musicSwitchCntrs:
@@ -580,7 +547,7 @@ def decodeWems():
 if __name__ == '__main__':
     print("[Main] Start!")
     print("[Main] Start unpacking Wwise banks...")
-    unpackWwiseBanks()
+    unpackWwiseBanks(r"D:\Program Files\Star Rail\Game\StarRail_Data")
     print("[Main] Start extracting bank wems...")
     extractBankWem()
     # if you just want to unpack but not rename, comment all lines below
