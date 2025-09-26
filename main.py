@@ -302,7 +302,7 @@ skip_num = 0
 completed_files = []
 
 
-def elegantRename(hash_path, voice_path, ext="wem", log_area="External"):
+def elegantRename(hash_path, voice_path, ext="wem", log_area="External", gentle=False):
     old_file_name = f"output/unpack/{hash_path}.{ext}"
     new_file_name = f"output/rename/{voice_path}.{ext}"
     if os.path.exists(new_file_name):
@@ -313,7 +313,8 @@ def elegantRename(hash_path, voice_path, ext="wem", log_area="External"):
         if old_file_name not in completed_files:
             completed_files.append(old_file_name)
     else:
-        print(f"[{log_area}] {old_file_name} -> {new_file_name} not found!")
+        if not gentle:
+            print(f"[{log_area}] {old_file_name} -> {new_file_name} not found!")
         global skip_num
         skip_num += 1
 
@@ -340,12 +341,27 @@ def renameExtrenalWems():
             for entry in data:
                 if entry.get("IsPlayerInvolved", False):
                     hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_f.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_f")
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_f", gentle=i=="SFX")
                     hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_m.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_m")
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_m", gentle=i=="SFX")
+                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}.wem")
+                    if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                        elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}")
                 else:
                     hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}")
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}", gentle=i=="SFX")
+        with open("data/ExcelOutput/ResourceDeletionVPList.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+            for entry in data:
+                hash = fnv_hash_64(f"{i}/voice/{entry["Path"]}_f.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["Path"]}_f")
+                hash = fnv_hash_64(f"{i}/voice/{entry["Path"]}_m.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["Path"]}_m")
+                hash = fnv_hash_64(f"{i}/voice/{entry["Path"]}.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["Path"]}")
 
     global skip_num
     print(f"[External] skipped {skip_num} files because of unfound hash.")
