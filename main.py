@@ -355,6 +355,12 @@ def renameExtrenalWems():
                 else:
                     hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}.wem")
                     elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}", gentle=i=="SFX")
+                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_f.wem")
+                    if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                        elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_f")
+                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_m.wem")
+                    if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                        elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_m")
         with open("data/ExcelOutput/ResourceDeletionVPList.json", "r", encoding="utf-8") as f:
             data = json.load(f)
             for entry in data:
@@ -367,6 +373,17 @@ def renameExtrenalWems():
                 hash = fnv_hash_64(f"{i}/voice/{entry["Path"]}.wem")
                 if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
                     elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["Path"]}")
+        with open("external_asset_names.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                hash = fnv_hash_64(f"{i}/voice/{line}_f.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{line}_f")
+                hash = fnv_hash_64(f"{i}/voice/{line}_m.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{line}_m")
+                hash = fnv_hash_64(f"{i}/voice/{line}.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{line}")
 
     global skip_num
     print(f"[External] skipped {skip_num} files because of unfound hash.")
