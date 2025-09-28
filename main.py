@@ -221,8 +221,6 @@ def generateBankData():
 
 def loadBankXml():
     global bank_dict
-    with open("output/unpack/banks.xml", 'r') as f:
-        xml_string = f.read()
     if os.path.exists("output/unpack/banks_temp.json"):
         with open("output/unpack/banks_temp.json", 'r') as f:
             bank_dict_old = json.load(f)
@@ -230,6 +228,8 @@ def loadBankXml():
             print("[Main] Bank data loaded from cache. If you want to reload, delete the `banks_temp.json` file.")
             bank_dict = bank_dict_old
             return
+    with open("output/unpack/banks.xml", 'r', encoding='utf-8') as f:
+        xml_string = f.read()
     data_dict = xmltodict.parse("<base>" + xml_string + "</base>")
     hash_map = {}
     for i in ["SFX", "Chinese(PRC)", "English", "Japanese", "Korean"]:
