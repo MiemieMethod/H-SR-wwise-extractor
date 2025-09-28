@@ -87,6 +87,11 @@ def outputWwnames():
     result += "\n### AUDIO CONFIG NAMES\n"
     with open("data/ExcelOutput/AvatarVO.json", "r", encoding="utf-8") as f:
         votags = json.load(f)
+    with open("data/ExcelOutput/AvatarVOLD.json", "r", encoding="utf-8") as f:
+        voldtags = json.load(f)
+    votags.extend(voldtags)
+    for i in range(0, 100):
+        result += "Difficulty{0}".replace("{0}", str(i)) + "\n"
     for votag in votags:
         result += "Ev_avatar_footsteps_material_{0}".replace("{0}", votag["VOTag"]) + "\n"
     with open("data/Config/AudioConfig.json", "r", encoding="utf-8") as f:
