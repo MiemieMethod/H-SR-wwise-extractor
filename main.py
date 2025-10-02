@@ -85,15 +85,19 @@ def outputWwnames():
             result += f"{entry["CombatBGMHigh"]}\n"
 
     result += "\n### AUDIO CONFIG NAMES\n"
+    for i in range(0, 100):
+        result += "Difficulty{0}".replace("{0}", str(i)) + "\n"
+    with open("data/Config/EffectConfig.json", "r", encoding="utf-8") as f:
+        effect = json.load(f)
+    for key in effect["EffectSurfaceTypeMap"]:
+        map = effect["EffectSurfaceTypeMap"][key]
+        for surface_type in map["EffectOverrideList"]:
+            result += "Ev_avatar_footsteps_material_{0}".replace("{0}", surface_type["StandSurfaceType"]) + "\n"
     with open("data/ExcelOutput/AvatarVO.json", "r", encoding="utf-8") as f:
         votags = json.load(f)
     with open("data/ExcelOutput/AvatarVOLD.json", "r", encoding="utf-8") as f:
         voldtags = json.load(f)
     votags.extend(voldtags)
-    for i in range(0, 100):
-        result += "Difficulty{0}".replace("{0}", str(i)) + "\n"
-    for votag in votags:
-        result += "Ev_avatar_footsteps_material_{0}".replace("{0}", votag["VOTag"]) + "\n"
     with open("data/Config/AudioConfig.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         for id in data:
@@ -104,9 +108,13 @@ def outputWwnames():
                     for votag in votags:
                         if subentry.find("{1}") != -1:
                             for votag2 in votags:
-                                result += subentry.replace("{0}", votag["VOTag"]).replace("{1}", votag2["VOTag"]) + "\n"
+                                to_add = subentry.replace("{0}", votag["VOTag"]).replace("{1}", votag2["VOTag"]) + "\n"
+                                result += to_add
+                                # result += to_add.replace("Ev_", "Ev_archive_")
                         else:
-                            result += subentry.replace("{0}", votag["VOTag"]) + "\n"
+                            to_add = subentry.replace("{0}", votag["VOTag"]) + "\n"
+                            result += to_add
+                            # result += to_add.replace("Ev_", "Ev_archive_")
                 continue
             if id == "SerialBellsInfo":
                 continue
@@ -584,25 +592,25 @@ def decodeWems():
 
 if __name__ == '__main__':
     print("[Main] Start!")
-    print("[Main] Start unpacking Wwise banks...")
-    unpackWwiseBanks(r"D:\Program Files\Star Rail\Game\StarRail_Data")
-    print("[Main] Start extracting bank wems...")
-    extractBankWem()
-    # if you just want to unpack but not rename, comment all lines below
-    print("[Main] Start outputting wwnames...")
+    # print("[Main] Start unpacking Wwise banks...")
+    # unpackWwiseBanks(r"D:\Program Files\Star Rail\Game\StarRail_Data")
+    # print("[Main] Start extracting bank wems...")
+    # extractBankWem()
+    # # if you just want to unpack but not rename, comment all lines below
+    # print("[Main] Start outputting wwnames...")
     outputWwnames()
-    print("[Main] Start generating bank data...")
-    generateBankData()
-    print("[Main] Start loading bank xml...")
-    loadBankXml()
-    print("[Main] Start renaming external wems...")
-    renameExtrenalWems()
-    print("[Main] Start renaming event wems...")
-    renameEventWems()
-    print("[Main] Start deleting completed files...")
-    # this program will delete the files in the `output/unpack` folder which are successfully renamed.
-    # if you want to keep them, comment the line below.
-    deleteCompletedFiles()
-    print("[Main] Start decoding wems...")
-    decodeWems()
+    # print("[Main] Start generating bank data...")
+    # generateBankData()
+    # print("[Main] Start loading bank xml...")
+    # loadBankXml()
+    # print("[Main] Start renaming external wems...")
+    # renameExtrenalWems()
+    # print("[Main] Start renaming event wems...")
+    # renameEventWems()
+    # print("[Main] Start deleting completed files...")
+    # # this program will delete the files in the `output/unpack` folder which are successfully renamed.
+    # # if you want to keep them, comment the line below.
+    # deleteCompletedFiles()
+    # print("[Main] Start decoding wems...")
+    # decodeWems()
     print("[Main] Done!")
