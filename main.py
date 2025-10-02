@@ -38,6 +38,10 @@ def addJsonString(json_data, results=[]):
 def outputWwnames():
     result = ""
 
+    with open("wwiser_utils/wwnames/Honkai - Star Rail (PC).txt", "r", encoding="utf-8") as f:
+        lines = [line for line in f if line.strip() and not line.lstrip().startswith('#')]
+        result += '\n### WWISER NAMES\n' + ''.join(lines)
+
     result += "\n### LANG NAMES\n"
     for key in ["SFX", "Chinese(PRC)", "English", "Japanese", "Korean"]:
         result += f"{key}\n"
@@ -98,6 +102,39 @@ def outputWwnames():
     with open("data/ExcelOutput/AvatarVOLD.json", "r", encoding="utf-8") as f:
         voldtags = json.load(f)
     votags.extend(voldtags)
+    votags_strings = set()
+    for votag in votags:
+        votags_strings.add(votag["VOTag"])
+    votags_strings.add("eileen")
+    votags_strings.add("danheng_il")
+    votags_strings.add("danheng_pt")
+    votags_strings.add("dr_ratio")
+    votags_strings.add("mar7th_10")
+    votags_strings.add("playerboyservant_30")
+    votags_strings.add("playergirlservant_30")
+    votags_strings.add("playerboy_spear")
+    votags_strings.add("playerboy_00")
+    votags_strings.add("playerboy_10")
+    votags_strings.add("playerboy_20")
+    votags_strings.add("playerboy_30")
+    votags_strings.add("playergirl_spear")
+    votags_strings.add("playergirl_00")
+    votags_strings.add("playergirl_10")
+    votags_strings.add("playergirl_20")
+    votags_strings.add("playergirl_30")
+    votags_strings.add("harscyline")
+    votags_strings.add("lancer")
+    votags_strings.add("junk")
+    votags_strings.add("topaz_zhangzhang")
+    votags_strings.add("soldiergun")
+    votags_strings.add("ren")
+    votags_strings.add("firesoldier")
+    votags_strings.add("mem")
+    servant_votags = set()
+    for votag in votags_strings:
+        if not votag.endswith("servant") and not votag.startswith("player"):
+            servant_votags.add(f"{votag}servant")
+    votags_strings = votags_strings.union(servant_votags)
     with open("data/Config/AudioConfig.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         for id in data:
@@ -105,16 +142,14 @@ def outputWwnames():
             if id == "CharacterVOEventMap" or id == "AdventureCharacterVOEventMap":
                 for subid in entry:
                     subentry = entry[subid]
-                    for votag in votags:
+                    for votag in votags_strings:
                         if subentry.find("{1}") != -1:
-                            for votag2 in votags:
-                                to_add = subentry.replace("{0}", votag["VOTag"]).replace("{1}", votag2["VOTag"]) + "\n"
+                            for votag2 in votags_strings:
+                                to_add = subentry.replace("{0}", votag).replace("{1}", votag2) + "\n"
                                 result += to_add
-                                # result += to_add.replace("Ev_", "Ev_archive_")
                         else:
-                            to_add = subentry.replace("{0}", votag["VOTag"]) + "\n"
+                            to_add = subentry.replace("{0}", votag) + "\n"
                             result += to_add
-                            # result += to_add.replace("Ev_", "Ev_archive_")
                 continue
             if id == "SerialBellsInfo":
                 continue
@@ -129,6 +164,34 @@ def outputWwnames():
                         for subsubid in subentry:
                             subsubentry = subentry[subsubid]
                             result += f"{subsubentry}\n"
+    skill_strings = set()
+    for i in range(0, 3):
+        for j in range(1, 4):
+            skill_strings.add(f"skill{i}{j}")
+            skill_strings.add(f"skill_{i}{j}")
+    skill_strings.add(f"standby")
+    with open("avatar_sfx_names.txt", "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                if line.find("{0}") != -1:
+                    if line.find("{1}") != -1:
+                        if line.find("{2}") != -1:
+                            for skill in skill_strings:
+                                for skill2 in skill_strings:
+                                    for votag in votags_strings:
+                                        to_add = line.replace("{0}", votag).replace("{1}", skill).replace("{2}", skill2) + "\n"
+                                        result += to_add
+
+                        else:
+                            for skill in skill_strings:
+                                for votag in votags_strings:
+                                    to_add = line.replace("{0}", votag).replace("{1}", skill) + "\n"
+                                    result += to_add
+                    else:
+                        for votag in votags_strings:
+                            to_add = line.replace("{0}", votag) + "\n"
+                            result += to_add
 
     result += "\n### BATTLE BGM CONFIG NAMES\n"
     with open("data/Config/BattleBGMConfig.json", "r", encoding="utf-8") as f:
@@ -136,26 +199,6 @@ def outputWwnames():
         for item in data["BattleBGMPriorityState"]:
             for item2 in item["BGMStateList"]:
                 result += f"{item2}\n"
-
-    with open("wwiser_utils/wwnames/Honkai - Star Rail (PC).txt", "r", encoding="utf-8") as f:
-        lines = [line for line in f if line.strip() and not line.lstrip().startswith('#')]
-        result += '\n### WWISER NAMES\n' + ''.join(lines)
-
-    # result += "\n### BRUTE FORCE NAMES\n"
-    # results = []
-    # for root, dirs, files in os.walk("data"):
-    #     for file in files:
-    #         if file.endswith(".json"):
-    #             with open(os.path.join(root, file), "r", encoding="utf-8") as f:
-    #                 if file.startswith("TextMap"):
-    #                     continue
-    #                 print(f"[Main] Name fetch: Reading {os.path.join(root, file)}")
-    #                 data = json.load(f)
-    #                 addJsonString(data, results)
-    # result += "\n".join(results)
-
-    # with open("output/or_wwnames.txt", "r", encoding="utf-8", errors="ignore") as f:
-    #     result += f.read()
 
     with open("brute_force_names.txt", "r", encoding="utf-8") as f:
         result += f.read()
@@ -592,25 +635,25 @@ def decodeWems():
 
 if __name__ == '__main__':
     print("[Main] Start!")
-    # print("[Main] Start unpacking Wwise banks...")
-    # unpackWwiseBanks(r"D:\Program Files\Star Rail\Game\StarRail_Data")
-    # print("[Main] Start extracting bank wems...")
-    # extractBankWem()
-    # # if you just want to unpack but not rename, comment all lines below
-    # print("[Main] Start outputting wwnames...")
+    print("[Main] Start unpacking Wwise banks...")
+    unpackWwiseBanks(r"D:\Program Files\Star Rail\Game\StarRail_Data")
+    print("[Main] Start extracting bank wems...")
+    extractBankWem()
+    # if you just want to unpack but not rename, comment all lines below
+    print("[Main] Start outputting wwnames...")
     outputWwnames()
-    # print("[Main] Start generating bank data...")
-    # generateBankData()
-    # print("[Main] Start loading bank xml...")
-    # loadBankXml()
+    print("[Main] Start generating bank data...")
+    generateBankData()
+    print("[Main] Start loading bank xml...")
+    loadBankXml()
     # print("[Main] Start renaming external wems...")
     # renameExtrenalWems()
-    # print("[Main] Start renaming event wems...")
-    # renameEventWems()
-    # print("[Main] Start deleting completed files...")
-    # # this program will delete the files in the `output/unpack` folder which are successfully renamed.
-    # # if you want to keep them, comment the line below.
-    # deleteCompletedFiles()
-    # print("[Main] Start decoding wems...")
-    # decodeWems()
+    print("[Main] Start renaming event wems...")
+    renameEventWems()
+    print("[Main] Start deleting completed files...")
+    # this program will delete the files in the `output/unpack` folder which are successfully renamed.
+    # if you want to keep them, comment the line below.
+    deleteCompletedFiles()
+    print("[Main] Start decoding wems...")
+    decodeWems()
     print("[Main] Done!")
