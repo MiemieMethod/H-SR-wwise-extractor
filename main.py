@@ -35,12 +35,142 @@ def addJsonString(json_data, results=[]):
                 if item not in results:
                     results.append(item)
 
-def outputWwnames():
+def outputWwnames(fuzzy=True, guess=True):
     result = ""
+
+    if not fuzzy:
+        result += "#@no-fuzzy\n"
+
+    result += "#@repeats-update-caps\n"
 
     with open("wwiser_utils/wwnames/Honkai - Star Rail (PC).txt", "r", encoding="utf-8") as f:
         lines = [line for line in f if line.strip() and not line.lstrip().startswith('#')]
         result += '\n### WWISER NAMES\n' + ''.join(lines)
+
+    with open("data/ExcelOutput/AvatarVO.json", "r", encoding="utf-8") as f:
+        votags = json.load(f)
+    with open("data/ExcelOutput/AvatarVOLD.json", "r", encoding="utf-8") as f:
+        voldtags = json.load(f)
+    votags.extend(voldtags)
+    votags_strings = set()
+    for votag in votags:
+        votags_strings.add(votag["VOTag"])
+    votags_strings.add("eileen")
+    votags_strings.add("danheng_il")
+    votags_strings.add("danheng_pt")
+    votags_strings.add("dr_ratio")
+    votags_strings.add("mar7th_10")
+    votags_strings.add("playerboyservant_30")
+    votags_strings.add("playergirlservant_30")
+    votags_strings.add("playerboy_spear")
+    votags_strings.add("playerboy_00")
+    votags_strings.add("playerboy_10")
+    votags_strings.add("playerboy_20")
+    votags_strings.add("playerboy_30")
+    votags_strings.add("playergirl_spear")
+    votags_strings.add("playergirl_00")
+    votags_strings.add("playergirl_10")
+    votags_strings.add("playergirl_20")
+    votags_strings.add("playergirl_30")
+    votags_strings.add("harscyline")
+    votags_strings.add("lancer")
+    votags_strings.add("junk")
+    votags_strings.add("topaz_zhangzhang")
+    votags_strings.add("ren")
+    votags_strings.add("mem")
+    votags_strings.add("firebird")
+    votags_strings.add("icebird")
+    votags_strings.add("mechabear")
+    votags_strings.add("aml_elite01")
+    votags_strings.add("aml_minion02")
+    votags_strings.add("aml_minion04")
+    votags_strings.add("mechaspider")
+    votags_strings.add("mechadog")
+    votags_strings.add("mechawolf")
+    votags_strings.add("fatmecha")
+    votags_strings.add("soldieraxe")
+    votags_strings.add("firesoldier")
+    votags_strings.add("icesoldier")
+    votags_strings.add("golddigger")
+    votags_strings.add("soldiergun")
+    votags_strings.add("soldierleader")
+    votags_strings.add("w1_soldier01")
+    votags_strings.add("w1_soldier02")
+    votags_strings.add("w1_soldier03")
+    votags_strings.add("w1_soldier04")
+    votags_strings.add("thinfmecha")
+    votags_strings.add("iceelite")
+    votags_strings.add("fireelite")
+    votags_strings.add("trafficlight")
+    votags_strings.add("w2_beast01")
+    votags_strings.add("xp_minion02")
+    votags_strings.add("xp_minion04")
+    votags_strings.add("castoriceservant")
+    votags_strings.add("aglaeaservant")
+    votags_strings.add("hyacineservant")
+    votags_strings.add("evernightservant")
+    votags_strings.add("cyreneservant")
+    if guess:
+        result += "\n### GUESSED AUDIO CONFIG NAMES\n"
+        skill_strings = set()
+        skill_strings_alt = set()
+        for i in range(0, 3):
+            for j in range(1, 4):
+                skill_strings.add(f"skill{i}{j}")
+                skill_strings_alt.add(f"skill{i}{j}")
+        for i in range(0, 10):
+            skill_strings_alt.add(f"skill_0{i}")
+        skill_strings.add(f"standby")
+        skill_strings_alt.add(f"standby")
+        with open("avatar_sfx_names.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    if line.find("{0}") != -1:
+                        if line.find("{1}") != -1:
+                            if line.find("{2}") != -1:
+                                for skill in skill_strings:
+                                    for skill2 in skill_strings:
+                                        for votag in votags_strings:
+                                            to_add = line.replace("{0}", votag).replace("{1}", skill).replace("{2}",
+                                                                                                              skill2) + "\n"
+                                            result += to_add
+                            else:
+                                for skill in skill_strings_alt:
+                                    for votag in votags_strings:
+                                        to_add = line.replace("{0}", votag).replace("{1}", skill) + "\n"
+                                        result += to_add
+                        else:
+                            for votag in votags_strings:
+                                to_add = line.replace("{0}", votag) + "\n"
+                                result += to_add
+        skill_strings_alt2 = set()
+        monster_votags = set()
+        for i in range(0, 4):
+            for j in range(0, 10):
+                skill_strings_alt2.add(f"skill{i}{j}")
+                skill_strings_alt2.add(f"skill_{i}{j}")
+        with open("monster_names.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    monster_votags.add(line)
+        for i in range(6000, 6100):
+            monster_votags.add(f"{i}")
+        with open("monster_sfx_names.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    if line.find("{0}") != -1:
+                        if line.find("{1}") != -1:
+                            for skill in skill_strings_alt2:
+                                for votag in monster_votags:
+                                    to_add = line.replace("{0}", votag).replace("{1}", skill) + "\n"
+                                    result += to_add
+                        else:
+                            for votag in monster_votags:
+                                to_add = line.replace("{0}", votag) + "\n"
+                                result += to_add
 
     result += "\n### LANG NAMES\n"
     for key in ["SFX", "Chinese(PRC)", "English", "Japanese", "Korean"]:
@@ -97,44 +227,6 @@ def outputWwnames():
         map = effect["EffectSurfaceTypeMap"][key]
         for surface_type in map["EffectOverrideList"]:
             result += "Ev_avatar_footsteps_material_{0}".replace("{0}", surface_type["StandSurfaceType"]) + "\n"
-    with open("data/ExcelOutput/AvatarVO.json", "r", encoding="utf-8") as f:
-        votags = json.load(f)
-    with open("data/ExcelOutput/AvatarVOLD.json", "r", encoding="utf-8") as f:
-        voldtags = json.load(f)
-    votags.extend(voldtags)
-    votags_strings = set()
-    for votag in votags:
-        votags_strings.add(votag["VOTag"])
-    votags_strings.add("eileen")
-    votags_strings.add("danheng_il")
-    votags_strings.add("danheng_pt")
-    votags_strings.add("dr_ratio")
-    votags_strings.add("mar7th_10")
-    votags_strings.add("playerboyservant_30")
-    votags_strings.add("playergirlservant_30")
-    votags_strings.add("playerboy_spear")
-    votags_strings.add("playerboy_00")
-    votags_strings.add("playerboy_10")
-    votags_strings.add("playerboy_20")
-    votags_strings.add("playerboy_30")
-    votags_strings.add("playergirl_spear")
-    votags_strings.add("playergirl_00")
-    votags_strings.add("playergirl_10")
-    votags_strings.add("playergirl_20")
-    votags_strings.add("playergirl_30")
-    votags_strings.add("harscyline")
-    votags_strings.add("lancer")
-    votags_strings.add("junk")
-    votags_strings.add("topaz_zhangzhang")
-    votags_strings.add("soldiergun")
-    votags_strings.add("ren")
-    votags_strings.add("firesoldier")
-    votags_strings.add("mem")
-    servant_votags = set()
-    for votag in votags_strings:
-        if not votag.endswith("servant") and not votag.startswith("player"):
-            servant_votags.add(f"{votag}servant")
-    votags_strings = votags_strings.union(servant_votags)
     with open("data/Config/AudioConfig.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         for id in data:
@@ -164,34 +256,11 @@ def outputWwnames():
                         for subsubid in subentry:
                             subsubentry = subentry[subsubid]
                             result += f"{subsubentry}\n"
-    skill_strings = set()
-    for i in range(0, 3):
-        for j in range(1, 4):
-            skill_strings.add(f"skill{i}{j}")
-            skill_strings.add(f"skill_{i}{j}")
-    skill_strings.add(f"standby")
-    with open("avatar_sfx_names.txt", "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                if line.find("{0}") != -1:
-                    if line.find("{1}") != -1:
-                        if line.find("{2}") != -1:
-                            for skill in skill_strings:
-                                for skill2 in skill_strings:
-                                    for votag in votags_strings:
-                                        to_add = line.replace("{0}", votag).replace("{1}", skill).replace("{2}", skill2) + "\n"
-                                        result += to_add
+    for votag in votags_strings:
+        result += f"Ev_vo_avatar_skill_select_{votag}\n"
+        result += f"Ev_vo_avatar_skill02_select_{votag}\n"
+        result += f"Ev_vo_avatar_debuff_{votag}\n"
 
-                        else:
-                            for skill in skill_strings:
-                                for votag in votags_strings:
-                                    to_add = line.replace("{0}", votag).replace("{1}", skill) + "\n"
-                                    result += to_add
-                    else:
-                        for votag in votags_strings:
-                            to_add = line.replace("{0}", votag) + "\n"
-                            result += to_add
 
     result += "\n### BATTLE BGM CONFIG NAMES\n"
     with open("data/Config/BattleBGMConfig.json", "r", encoding="utf-8") as f:
@@ -207,6 +276,9 @@ def outputWwnames():
         result += f.read()
 
     with open("manual_names.txt", "r", encoding="utf-8") as f:
+        result += f.read()
+
+    with open("bank_names.txt", "r", encoding="utf-8") as f:
         result += f.read()
 
     with open("output/unpack/wwnames.txt", "w", encoding="utf-8") as f:
@@ -441,7 +513,7 @@ def renameExtrenalWems():
     skip_num = 0
 
 
-def renameEventWems():
+def renameEventWems(use_index=True):
     def getLoadedItems(bank):
         hirc = bank.get("HircChunk", {})
         loaded_items = hirc.get("listLoadedItem", [])
@@ -508,7 +580,11 @@ def renameEventWems():
                 source_sound_path = normal_sound_path.replace(f"{lang.lower()}", "sfx")
             name = source["AkMediaInformation"]["sourceID"]["@value"]
             file2rename = f"{source_sound_path[14:]}/{name}"
-            file_destination = f"{normal_sound_path[14:]}/{path}/{index}{'~' if source_index else ''}{source_index}~{name}"
+            if use_index:
+                index_string = f"{index}{'~' if source_index else ''}{source_index}~"
+            else:
+                index_string = ""
+            file_destination = f"{normal_sound_path[14:]}/{path}/{index_string}{name}"
             if not os.path.exists(f"output/rename/{normal_sound_path[14:]}/{path}"):
                 os.makedirs(f"output/rename/{normal_sound_path[14:]}/{path}")
             results.append((file2rename, file_destination))
@@ -641,7 +717,7 @@ if __name__ == '__main__':
     extractBankWem()
     # if you just want to unpack but not rename, comment all lines below
     print("[Main] Start outputting wwnames...")
-    outputWwnames()
+    outputWwnames(False, False)
     print("[Main] Start generating bank data...")
     generateBankData()
     print("[Main] Start loading bank xml...")
