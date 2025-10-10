@@ -347,9 +347,9 @@ def generateBankData():
     print(result.stdout)
 
 
-def loadBankXml():
+def loadBankXml(use_old=True):
     global bank_dict
-    if os.path.exists("output/unpack/banks_temp.json"):
+    if use_old and os.path.exists("output/unpack/banks_temp.json"):
         with open("output/unpack/banks_temp.json", 'r') as f:
             bank_dict_old = json.load(f)
             # if bank_dict_old["hash"] == fnv_hash_64(xml_string):
@@ -456,13 +456,16 @@ def deleteCompletedFiles():
         os.remove(file)
     completed_files = []
 
-    for i in ["Chinese(PRC)", "English", "Japanese", "Korean"]:
+    for i in ["Chinese(PRC)", "English", "Japanese", "Korean", "SFX"]:
+        if not os.path.exists(f"output/rename/unclassified/{i}"):
+            os.makedirs(f"output/rename/unclassified/{i}")
         if os.path.exists(f"output/unpack/{i}"):
             if not os.path.exists(f"output/rename/{i}"):
                 os.makedirs(f"output/rename/{i}")
             for root, dirs, files in os.walk(f"output/unpack/{i}"):
                 for file in files:
-                    shutil.copy2(os.path.join(root, file), f"output/rename/unclassified/{i}/{file}")
+                    if file.endswith('.wem'):
+                        shutil.copy2(os.path.join(root, file), f"output/rename/unclassified/{i}/{file}")
 
 
 def renameExtrenalWems():
@@ -613,11 +616,17 @@ def renameEventWems(use_index=True):
 
             if name == "CAkSwitchCntr":
                 node_id2name = {}
+                childs = []
+                getChilds(loaded_items[sound_id]["SwitchCntrInitialValues"]["Children"], childs)
                 findSwitchNode(loaded_items[sound_id]["SwitchCntrInitialValues"]["SwitchList"], node_id2name)
                 for child in node_id2name:
                     subpath = path
                     subpath += f"/{node_id2name[child]}"
                     findSound(child, loaded_items, normal_sound_path, lang, subpath, results)
+                    if child in childs:
+                        childs.remove(child)
+                for child in childs:
+                    findSound(child, loaded_items, normal_sound_path, lang, path + f"/unswitched-{child}", results)
 
             if name == "CAkRanSeqCntr":
                 childs = []
@@ -637,12 +646,20 @@ def renameEventWems(use_index=True):
 
             if name == "CAkMusicSwitchCntr":
                 node_id2name = {}
+                childs = []
+                getChilds(
+                    loaded_items[sound_id]["MusicSwitchCntrInitialValues"]["MusicTransNodeParams"]["MusicNodeParams"][
+                        "Children"], childs)
                 findAudioNode(loaded_items[sound_id]["MusicSwitchCntrInitialValues"]["AkDecisionTree"]["pNodes"],
                               node_id2name)
                 for child in node_id2name:
                     subpath = path
                     subpath += f"/{node_id2name[child]}"
                     findSound(child, loaded_items, normal_sound_path, lang, subpath, results)
+                    if child in childs:
+                        childs.remove(child)
+                for child in childs:
+                    findSound(child, loaded_items, normal_sound_path, lang, path + f"/unswitched-{child}", results)
 
             if name == "CAkMusicRanSeqCntr":
                 childs = []
@@ -680,6 +697,7 @@ def renameEventWems(use_index=True):
             for item_id in loaded_items_map:
                 item = loaded_items_map[item_id]
                 if item["@name"] == "CAkEvent":
+                    # print(f"[Event] processing event {item['ulID'].get('@hashname', item['ulID']['@value'])}...")
                     event_id = item["ulID"]["@value"]
                     event_name = item["ulID"].get("@hashname", event_id)
                     for action in item["EventInitialValues"]["actions"]:
@@ -688,8 +706,11 @@ def renameEventWems(use_index=True):
                             params = action_item["ActionInitialValues"]["PlayActionParams"]
                             id_ext = action_item["ActionInitialValues"]["idExt"]["@value"]
                             for sound_lang in (["SFX", lang] if lang != "SFX" else ["SFX", "Chinese(PRC)", "English", "Japanese", "Korean"]):
-                                if sound_lang in bank_dict and params["bankID"]["@value"] + ".bnk" in bank_dict[sound_lang]:
-                                    sound_bank = bank_dict[sound_lang][params["bankID"]["@value"] + ".bnk"]
+                                if sound_lang in bank_dict and (params["bankID"]["@value"] + ".bnk" in bank_dict[sound_lang] or params["bankID"].get("@hashname", "") + ".bnk" in bank_dict[sound_lang] or params["bankID"].get("@guidname", "") + ".bnk" in bank_dict[sound_lang]):
+                                    sound_bank = bank_dict[sound_lang].get(params["bankID"]["@value"] + ".bnk", bank_dict[sound_lang].get(params["bankID"].get("@hashname", "") + ".bnk", bank_dict[sound_lang].get(params["bankID"].get("@guidname", "") + ".bnk", None)))
+                                    if sound_bank is None:
+                                        # print(f"[Event] ERR: {sound_lang}: {sound_bank} cannot be found!")
+                                        continue
                                     sound_bank_loaded_items_map = getLoadedItems(sound_bank)
 
                                     sound_processed = False
@@ -705,6 +726,9 @@ def renameEventWems(use_index=True):
 
                                     if sound_processed and f"{normal_sound_path}/{sound_bank["@filename"]}" not in completed_files:
                                         completed_files.append(f"{normal_sound_path}/{sound_bank["@filename"]}")
+                                else:
+                                    # print(f"[Event] ERR: {sound_lang}: {params['bankID']['@value']}.bnk cannot be found!")
+                                    pass
 
                     processed = True
 
