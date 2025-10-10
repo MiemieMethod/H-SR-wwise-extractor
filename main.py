@@ -310,8 +310,8 @@ def unpackWwiseBanks(path = "input"):
     addAllPckFiles(package, path)
 
     for i in ["SFX", "Chinese(PRC)", "English", "Japanese", "Korean"]:
-        if not os.path.exists(f"output/unpack/{i.lower()}"):
-            os.makedirs(f"output/unpack/{i.lower()}")
+        if not os.path.exists(f"output/unpack/{i}"):
+            os.makedirs(f"output/unpack/{i}")
         if i.upper() in package.LANGUAGE_DEF:
             langcode = package.LANGUAGE_DEF[i.upper()]
         else:
@@ -319,25 +319,25 @@ def unpackWwiseBanks(path = "input"):
         if len(package.map[0]) > 0 and langcode in package.map[0]:
             for j in package.map[0][langcode]:
                 file_data = package.get_file_data_by_hash(j, langcode, 0)
-                with open(f'output/unpack/{i.lower()}/{j}.bnk', 'wb') as f:
+                with open(f'output/unpack/{i}/{j}.bnk', 'wb') as f:
                     elegantWrite(f, file_data)
         if len(package.map[1]) > 0 and langcode in package.map[1]:
             for j in package.map[1][langcode]:
                 file_data = package.get_file_data_by_hash(j, langcode, 1)
-                with open(f'output/unpack/{i.lower()}/{j}.wem', 'wb') as f:
+                with open(f'output/unpack/{i}/{j}.wem', 'wb') as f:
                     elegantWrite(f, file_data)
         if len(package.map[2]) > 0 and langcode in package.map[2]:
             for j in package.map[2][langcode]:
                 file_data = package.get_file_data_by_hash(j, langcode, 2)
-                if not os.path.exists(f"output/unpack/{i.lower()}/externals"):
-                    os.makedirs(f"output/unpack/{i.lower()}/externals")
-                with open(f'output/unpack/{i.lower()}/externals/{j}.wem', 'wb') as f:
+                if not os.path.exists(f"output/unpack/{i}/externals"):
+                    os.makedirs(f"output/unpack/{i}/externals")
+                with open(f'output/unpack/{i}/externals/{j}.wem', 'wb') as f:
                     elegantWrite(f, file_data)
 
 
 def extractBankWem():
     for i in ["SFX", "Chinese(PRC)", "English", "Japanese", "Korean"]:
-        result = subprocess.run(['./quickbms', '-F', '*.bnk', '-k', './wwiser_utils/scripts/wwise_bnk_extractor.bms', f'./output/unpack/{i.lower()}', f'./output/unpack/{i.lower()}'],
+        result = subprocess.run(['./quickbms', '-F', '*.bnk', '-k', './wwiser_utils/scripts/wwise_bnk_extractor.bms', f'./output/unpack/{i}', f'./output/unpack/{i}'],
                             capture_output=True, text=True)
         print(result.stdout)
 
@@ -456,57 +456,76 @@ def deleteCompletedFiles():
         os.remove(file)
     completed_files = []
 
+    for i in ["Chinese(PRC)", "English", "Japanese", "Korean"]:
+        if os.path.exists(f"output/unpack/{i}"):
+            if not os.path.exists(f"output/rename/{i}"):
+                os.makedirs(f"output/rename/{i}")
+            for root, dirs, files in os.walk(f"output/unpack/{i}"):
+                for file in files:
+                    shutil.copy2(os.path.join(root, file), f"output/rename/unclassified/{i}/{file}")
+
 
 def renameExtrenalWems():
     if not os.path.exists(f"output/rename"):
         os.makedirs(f"output/rename")
 
     for i in ["Chinese(PRC)", "English", "Japanese", "Korean"]:
-        if not os.path.exists(f"output/rename/{i.lower()}/voice"):
-            os.makedirs(f"output/rename/{i.lower()}/voice")
+        if not os.path.exists(f"output/rename/{i}/Voice"):
+            os.makedirs(f"output/rename/{i}/Voice")
         with open("data/ExcelOutput/VoiceConfig.json", "r", encoding="utf-8") as f:
             data = json.load(f)
             for entry in data:
                 if entry.get("IsPlayerInvolved", False):
-                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_f.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_f", gentle=i=="SFX")
-                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_m.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_m", gentle=i=="SFX")
-                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}.wem")
+                    hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}_f.wem")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_f", gentle=i=="SFX")
+                    hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}_m.wem")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_m", gentle=i=="SFX")
+                    hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}.wem")
                     if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                        elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}")
+                        elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}")
                 else:
-                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}", gentle=i=="SFX")
-                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_f.wem")
+                    hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}.wem")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}", gentle=i=="SFX")
+                    hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}_f.wem")
                     if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                        elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_f")
-                    hash = fnv_hash_64(f"{i}/voice/{entry["VoicePath"]}_m.wem")
+                        elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_f")
+                    hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}_m.wem")
                     if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                        elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["VoicePath"]}_m")
+                        elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_m")
         with open("data/ExcelOutput/ResourceDeletionVPList.json", "r", encoding="utf-8") as f:
             data = json.load(f)
             for entry in data:
-                hash = fnv_hash_64(f"{i}/voice/{entry["Path"]}_f.wem")
+                hash = fnv_hash_64(f"{i}/Voice/{entry["Path"]}_f.wem")
                 if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["Path"]}_f")
-                hash = fnv_hash_64(f"{i}/voice/{entry["Path"]}_m.wem")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["Path"]}_f")
+                hash = fnv_hash_64(f"{i}/Voice/{entry["Path"]}_m.wem")
                 if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["Path"]}_m")
-                hash = fnv_hash_64(f"{i}/voice/{entry["Path"]}.wem")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["Path"]}_m")
+                hash = fnv_hash_64(f"{i}/Voice/{entry["Path"]}.wem")
                 if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{entry["Path"]}")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["Path"]}")
         with open("external_asset_names.txt", "r", encoding="utf-8") as f:
             for line in f:
-                hash = fnv_hash_64(f"{i}/voice/{line}_f.wem")
+                hash = fnv_hash_64(f"{i}/Voice/{line}_f.wem")
                 if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{line}_f")
-                hash = fnv_hash_64(f"{i}/voice/{line}_m.wem")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{line}_f")
+                hash = fnv_hash_64(f"{i}/Voice/{line}_m.wem")
                 if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{line}_m")
-                hash = fnv_hash_64(f"{i}/voice/{line}.wem")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{line}_m")
+                hash = fnv_hash_64(f"{i}/Voice/{line}.wem")
                 if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
-                    elegantRename(f"sfx/externals/{hash}", f"{i.lower()}/voice/{line}")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{line}")
+        with open("external_extra_names.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                hash = fnv_hash_64(f"{i}/Voice/{line}_f.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{line}_f")
+                hash = fnv_hash_64(f"{i}/Voice/{line}_m.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{line}_m")
+                hash = fnv_hash_64(f"{i}/Voice/{line}.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{line}")
 
     global skip_num
     print(f"[External] skipped {skip_num} files because of unfound hash.")
@@ -577,7 +596,7 @@ def renameEventWems(use_index=True):
         def renameSource(source, index, source_index):
             source_sound_path = normal_sound_path
             if source["AkMediaInformation"]["uSourceBits"]["bIsLanguageSpecific"]["@value"] == "0":
-                source_sound_path = normal_sound_path.replace(f"{lang.lower()}", "sfx")
+                source_sound_path = normal_sound_path.replace(f"{lang}", "sfx")
             name = source["AkMediaInformation"]["sourceID"]["@value"]
             file2rename = f"{source_sound_path[14:]}/{name}"
             if use_index:
@@ -722,10 +741,10 @@ if __name__ == '__main__':
     generateBankData()
     print("[Main] Start loading bank xml...")
     loadBankXml()
-    # print("[Main] Start renaming external wems...")
-    # renameExtrenalWems()
+    print("[Main] Start renaming external wems...")
+    renameExtrenalWems()
     print("[Main] Start renaming event wems...")
-    renameEventWems()
+    renameEventWems(False)
     print("[Main] Start deleting completed files...")
     # this program will delete the files in the `output/unpack` folder which are successfully renamed.
     # if you want to keep them, comment the line below.
