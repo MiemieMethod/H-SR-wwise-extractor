@@ -47,6 +47,7 @@ ice
 icebird
 iceelite
 icesoldier
+irontomb_00
 jingmengjutuan_lv1andlv2
 jiqiao
 juanshu
@@ -78,6 +79,7 @@ sw_boss_01
 sw_minion01_00
 sw_minion01_01
 sw_minion01_02
+sw_minion01_03
 template01
 theoroi_00
 thinfmecha
@@ -200,9 +202,15 @@ w4_harpy_00
 w4_hearse_00
 w4_hearsepart_00
 w4_herta_00
+w4_irontombcore_00
+w4_irontombcorepart_00
+w4_irontombcorepart_01
+w4_irontombpart_00
+w4_irontombpart_01
 w4_manta_00
 w4_mascot_00
 w4_nikadory_00
+w4_phainon_00
 w4_pollux_00
 w4_polluxpart_00
 w4_scholar_00
@@ -214,8 +222,11 @@ w4_shooter_00
 w4_shooter_01
 w4_strongman_00
 w4_theoroi_00
+w4_trontombcorepart_00
+w4_trontombcore_00
 w4_turkey_00
 w4_unicorn_00
+w4_unicorn_01
 xp_elite01_00
 xp_elite01_01
 xp_elite01_02

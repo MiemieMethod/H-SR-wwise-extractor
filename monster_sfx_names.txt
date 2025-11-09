@@ -80,12 +80,16 @@ Ev_sfx_monster_{1}_{0}_hit_h
 Ev_sfx_monster_{1}_{0}_jump
 Ev_sfx_monster_{1}_{0}_loop
 Ev_sfx_monster_{1}_{0}_loop_stop
+Ev_sfx_monster_{1}_{0}_pause
+Ev_sfx_monster_{1}_{0}_resume
 Ev_sfx_monster_{1}_{0}_rise
 Ev_sfx_monster_{1}_{0}_scene_score
 Ev_sfx_monster_{1}_{0}_solo
 Ev_sfx_monster_{1}_{0}_solo_stop
+Ev_sfx_monster_{1}_{0}_stop
 Ev_sfx_monster_{1}_{0}_sword_disappear
 Ev_sfx_monster_{1}_{0}_whoosh
+Ev_sfx_monster_{1}_01_{0}
 Ev_sfx_monster_{1}_02_{0}
 Ev_sfx_monster_{1}_02_attack_{0}
 Ev_sfx_monster_{1}_04_{0}
@@ -98,6 +102,7 @@ Ev_sfx_monster_{1}_charge_{0}
 Ev_sfx_monster_{1}_fail_{0}
 Ev_sfx_monster_{1}_fast_{0}
 Ev_sfx_monster_{1}_fly_{0}
+Ev_sfx_monster_{1}_fs_{0}_main
 Ev_sfx_monster_{1}_hit_{0}
 Ev_sfx_monster_{1}_hit_{0}_be_common
 Ev_sfx_monster_{1}_hit_bonus_{0}
@@ -113,6 +118,7 @@ Ev_sfx_monster_{1}_loop_{0}_stop
 Ev_sfx_monster_{1}_main_{0}
 Ev_sfx_monster_{1}_maze_{0}
 Ev_sfx_monster_{1}_one_shot_{0}
+Ev_sfx_monster_{1}_perform_{0}
 Ev_sfx_monster_{1}_pre_{0}
 Ev_sfx_monster_{1}_ready_{0}
 Ev_sfx_monster_{1}_self_{0}
@@ -130,6 +136,7 @@ Ev_sfx_monster_00_{1}_hit_h_{0}
 Ev_sfx_monster_absorb_{0}
 Ev_sfx_monster_aoe_hit02_{0}
 Ev_sfx_monster_appear_{0}
+Ev_sfx_monster_appear_{0}_main
 Ev_sfx_monster_appear02_{0}
 Ev_sfx_monster_appearstage3_{0}
 Ev_sfx_monster_atk_cast_{0}
@@ -155,6 +162,8 @@ Ev_sfx_monster_avatar_ultra_skill_cast_{0}
 Ev_sfx_monster_avatar_ultra_skill_cast_{0}_as
 Ev_sfx_monster_avatar_ultra_skill_cast_{0}_bs
 Ev_sfx_monster_battleevent_{0}
+Ev_sfx_monster_be_ui_{0}_as
+Ev_sfx_monster_be_ui_{0}_bs
 Ev_sfx_monster_behit_h_stage3_{0}
 Ev_sfx_monster_break_{0}
 Ev_sfx_monster_break_loop_{0}
@@ -315,6 +324,8 @@ Ev_sfx_monster_freestyleprevieweditor_wagtail01_{0}
 Ev_sfx_monster_freestyleprevieweditor_walk_{0}
 Ev_sfx_monster_hand_die_{0}
 Ev_sfx_monster_hand_standby_{0}
+Ev_sfx_monster_hateupbe_{0}
+Ev_sfx_monster_hateupbe_{0}_main
 Ev_sfx_monster_hit_{0}
 Ev_sfx_monster_hit_die_{0}
 Ev_sfx_monster_hit_fly_{0}
@@ -407,6 +418,7 @@ Ev_sfx_monster_mazer_stagger_{0}
 Ev_sfx_monster_monster_{0}_ani_break_loop
 Ev_sfx_monster_passive{1}_{0}
 Ev_sfx_monster_passiveskill_{0}
+Ev_sfx_monster_passiveskill01_{0}
 Ev_sfx_monster_perform02_{0}
 Ev_sfx_monster_phase3_{0}_charge01
 Ev_sfx_monster_phase3_{0}_charge02
@@ -436,6 +448,8 @@ Ev_sfx_monster_skill_p01_{0}
 Ev_sfx_monster_skill_p04_{0}
 Ev_sfx_monster_skill_sharphit_{0}
 Ev_sfx_monster_skill_specialdie_{0}
+Ev_sfx_monster_skill01_{0}
+Ev_sfx_monster_skill02_{0}
 Ev_sfx_monster_skillp01_{0}_as
 Ev_sfx_monster_skillp01_{0}_bs
 Ev_sfx_monster_skillp01_{0}_loop
@@ -494,8 +508,6 @@ Ev_sfx_monster_vo_{0}_break_occur
 Ev_sfx_monster_vo_{0}_die
 Ev_sfx_monster_vo_{0}_hit
 Ev_sfx_monster_vo_hit_h_break_{0}
-Ev_sfx_monster_vo_hit_h_break_{0}
-Ev_sfx_monster_vo_hit_h_break_{0}
 Ev_sfx_monster_walk_{0}
 Ev_sfx_monster_walk_{0}_l
 Ev_sfx_monster_walk_{0}_r
@@ -534,6 +546,7 @@ Ev_vo_monster_{1}_{0}_destruction
 Ev_vo_monster_{1}_{0}_nomask
 Ev_vo_monster_{1}_01_{0}
 Ev_vo_monster_{1}_02_{0}
+Ev_vo_monster_{1}_03_{0}
 Ev_vo_monster_{1}_04_{0}
 Ev_vo_monster_{1}_loop_{0}
 Ev_vo_monster_{1}_main_{0}
@@ -546,6 +559,8 @@ Ev_vo_monster_alert_start_{0}
 Ev_vo_monster_angry_hit_{0}
 Ev_vo_monster_angry_hit_h_{0}
 Ev_vo_monster_appear_{0}
+Ev_vo_monster_appear_{0}_01
+Ev_vo_monster_appear_{0}_02
 Ev_vo_monster_appear_{0}_creating
 Ev_vo_monster_appear_stage_{0}
 Ev_vo_monster_appear_stage2_{0}
