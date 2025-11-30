@@ -480,15 +480,15 @@ def renameExtrenalWems():
             for entry in data:
                 if entry.get("IsPlayerInvolved", False):
                     hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}_f.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_f", gentle=i=="SFX")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_f")
                     hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}_m.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_m", gentle=i=="SFX")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_m")
                     hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}.wem")
                     if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
                         elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}")
                 else:
                     hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}.wem")
-                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}", gentle=i=="SFX")
+                    elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}")
                     hash = fnv_hash_64(f"{i}/Voice/{entry["VoicePath"]}_f.wem")
                     if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
                         elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{entry["VoicePath"]}_f")
@@ -529,6 +529,50 @@ def renameExtrenalWems():
                 hash = fnv_hash_64(f"{i}/Voice/{line}.wem")
                 if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
                     elegantRename(f"sfx/externals/{hash}", f"{i}/Voice/{line}")
+    if not os.path.exists(f"output/rename/SFX"):
+        os.makedirs(f"output/rename/SFX")
+    with open("data/ExcelOutput/SFXConfig.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+        for entry in data:
+            if entry.get("IsPlayerInvolved", False):
+                hash = fnv_hash_64(f"SFX/{entry["SFXPath"]}_f.wem")
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{entry["SFXPath"]}_f")
+                hash = fnv_hash_64(f"SFX/{entry["SFXPath"]}_m.wem")
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{entry["SFXPath"]}_m")
+                hash = fnv_hash_64(f"SFX/{entry["SFXPath"]}.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"SFX/{entry["SFXPath"]}")
+            else:
+                hash = fnv_hash_64(f"SFX/{entry["SFXPath"]}.wem")
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{entry["SFXPath"]}")
+                hash = fnv_hash_64(f"SFX/{entry["SFXPath"]}_f.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"SFX/{entry["SFXPath"]}_f")
+                hash = fnv_hash_64(f"SFX/{entry["SFXPath"]}_m.wem")
+                if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                    elegantRename(f"sfx/externals/{hash}", f"SFX/{entry["SFXPath"]}_m")
+    with open("external_asset_names.txt", "r", encoding="utf-8") as f:
+        for line in f:
+            hash = fnv_hash_64(f"SFX/{line}_f.wem")
+            if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{line}_f")
+            hash = fnv_hash_64(f"SFX/{line}_m.wem")
+            if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{line}_m")
+            hash = fnv_hash_64(f"SFX/{line}.wem")
+            if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{line}")
+    with open("external_extra_names.txt", "r", encoding="utf-8") as f:
+        for line in f:
+            hash = fnv_hash_64(f"SFX/{line}_f.wem")
+            if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{line}_f")
+            hash = fnv_hash_64(f"SFX/{line}_m.wem")
+            if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{line}_m")
+            hash = fnv_hash_64(f"SFX/{line}.wem")
+            if os.path.exists(f"output/unpack/sfx/externals/{hash}.wem"):
+                elegantRename(f"sfx/externals/{hash}", f"SFX/{line}")
 
     global skip_num
     print(f"[External] skipped {skip_num} files because of unfound hash.")

@@ -222,8 +222,8 @@ w4_shooter_00
 w4_shooter_01
 w4_strongman_00
 w4_theoroi_00
-w4_trontombcorepart_00
 w4_trontombcore_00
+w4_trontombcorepart_00
 w4_turkey_00
 w4_unicorn_00
 w4_unicorn_01
