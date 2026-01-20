@@ -7675,6 +7675,7 @@ ActionGroup_CameraShot
 ActionGroup_Cancel
 ActionGroup_CancelComfirm
 ActionGroup_Cancel_MatchThree
+ActionGroup_ChenLing_Return
 ActionGroup_ChimeraDuel_BattleDetail
 ActionGroup_ChimeraDuel_BattleSwitch
 ActionGroup_ChimeraDuel_ShopBuyAndUse
@@ -7692,6 +7693,8 @@ ActionGroup_DebatePrevious
 ActionGroup_DiceCombatCheck
 ActionGroup_DiceCombatTeam
 ActionGroup_Dictionary
+ActionGroup_Dictionary_X
+ActionGroup_Dictionary_Y
 ActionGroup_Edit
 ActionGroup_Elf_Buy_Field
 ActionGroup_Elf_Exchange
@@ -7714,6 +7717,7 @@ ActionGroup_FightFest_PaperScroll
 ActionGroup_FiveDim_Mission_Transmit
 ActionGroup_FiveDim_Open_Option
 ActionGroup_Fold
+ActionGroup_Fold_A
 ActionGroup_Fold_X
 ActionGroup_FriendTeamList
 ActionGroup_Friend_Assist
@@ -7848,6 +7852,7 @@ ActionGroup_TravelBrochure_Rotate
 ActionGroup_TravelBrochure_Scale
 ActionGroup_Travel_Ship_Exit
 ActionGroup_Unfold
+ActionGroup_Unfold_A
 ActionGroup_Unfold_X
 ActionGroup_ViewMode
 ActionGroup_WorldMapMove
@@ -47923,6 +47928,8 @@ BattleBattleEventInfoPanelBinder
 BattleBattleEventPanel
 BattleBattleEventPanelBinder
 BattleBattleStartDialogClose
+BattleBeneficialBuffPanel
+BattleBeneficialBuffPanelBinder
 BattleBossInfoBar
 BattleBrokenDialog
 BattleBrokenDialogBinder
@@ -48003,6 +48010,10 @@ BattleDeselectActionBarItem
 BattleDetailGlossaryTabItemBinder
 BattleDialogOffset
 BattleDisplayTitanCategories
+BattleElationBuffPanel
+BattleElationBuffPanelBinder
+BattleElationBuffRowPanel
+BattleElationBuffRowPanelBinder
 BattleElationCustomPanel
 BattleElationCustomPanelBinder
 BattleElationPointDetailData
@@ -156379,6 +156390,7 @@ Ev_sfx_ui_MazePlay_5D_MusicPlay_8Bit_9si
 Ev_sfx_ui_Menu_activity_FightFest_ChallengePage_fadeIn
 Ev_sfx_ui_activity_380Active_FadeIn
 Ev_sfx_ui_activity_380Active_OpenBox
+Ev_sfx_ui_activity_DiceCombat_PVP_PlzReady
 Ev_sfx_ui_click_activity_ChallengeStory_MainPanel_highted
 Ev_sfx_ui_click_activity_diceRogue_normal
 Ev_sfx_ui_click_activity_fantasticStory_buffPanel_click
@@ -207076,6 +207088,7 @@ State_ForKevin
 State_GamePlay_EraFlipper_DayAndNight
 State_Gameplay_Amphoreus_Dzt
 State_Gameplay_FiveDim_2D
+State_Gameplay_FiveDim_GameBoy
 State_Gameplay_FiveDim_MusicPlay
 State_Gameplay_Isometric
 State_Gameplay_Objects_WolfBro
@@ -207113,6 +207126,7 @@ State_Menu_Season_GridFightEditPage
 State_Menu_Season_GridFightMainPage
 State_Menu_Season_Inventory_Stocking
 State_Menu_Season_Ledger_of_Curiosities_Museum
+State_Menu_Season_LimaoNews
 State_Menu_Season_Logistics_Planning
 State_Menu_Season_Marble
 State_Menu_Season_MatchThree_Main
@@ -261582,6 +261596,8 @@ play_white_screen_anim
 play_win_anim
 play_work_progress_fade_in
 play_work_progress_fade_out
+play_zoom_in_animation
+play_zoom_out_animation
 player01
 playergirllook01
 playerhead
@@ -265083,6 +265099,7 @@ state_animation
 state_animator
 state_before_unlock
 state_canvas
+state_ctrl
 state_normal_animation
 state_others
 state_provider
@@ -265201,6 +265218,7 @@ switcher_afford
 switcher_applied
 switcher_battle_btn
 switcher_btn
+switcher_btn_confirm
 switcher_color
 switcher_farm
 switcher_hint
@@ -265465,6 +265483,7 @@ ui_meta
 ui_meta_dof
 ui_mono_joy_stick
 ui_navigation
+ui_navigation_btn_root
 ui_param_deliverer
 ui_partial_blur
 ui_particle_clippable
